@@ -4,7 +4,7 @@
 		"name": "API Project",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "21199545",
-		"_collection_link": "https://www.postman.com/mission-administrator-23414654/workspace/bootcamp-qa/collection/21199545-6b6ff327-39c4-4e07-9d4f-047f5da74d2f?action=share&source=collection_link&creator=21199545"
+		"_collection_link": "https://www.postman.com/mission-administrator-23414654/workspace/17726acc-0f05-4761-99ed-24171f1a6578/collection/21199545-6b6ff327-39c4-4e07-9d4f-047f5da74d2f?action=share&source=collection_link&creator=21199545"
 	},
 	"item": [
 		{
@@ -38,6 +38,7 @@
 					"script": {
 						"exec": [
 							"const random = Math.floor(Math.random() * 100000);\r",
+							"pm.environment.set('name', 'faiz');\r",
 							"pm.environment.set('email', `faiz+${random}@gmail.com`);"
 						],
 						"type": "text/javascript",
@@ -150,18 +151,25 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));\r",
-							"pm.test(\"Response time < 500ms\", () => pm.expect(pm.response.responseTime).to.be.below(500));\r",
-							"pm.test(\"Book details are correct\", () => {\r",
-							"    const json = pm.response.json();\r",
-							"    pm.expect(json.id).to.eql(1);\r",
-							"    pm.expect(json.name).to.eql(\"The Russian\");\r",
-							"    pm.expect(json.author).to.eql(\"James Patterson and James O. Born\");\r",
-							"    pm.expect(json.isbn).to.eql(\"1780899475\");\r",
-							"    pm.expect(json.type).to.eql(\"fiction\");\r",
-							"    pm.expect(json.price).to.eql(12.98);\r",
-							"    pm.expect(json[\"current-stock\"]).to.eql(12);\r",
-							"    pm.expect(json.available).to.eql(true);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"All book values are correct\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(1);\r",
+							"    pm.expect(jsonData.name).to.eql(\"The Russian\");\r",
+							"    pm.expect(jsonData.author).to.eql(\"James Patterson and James O. Born\");\r",
+							"    pm.expect(jsonData.isbn).to.eql(\"1780899475\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"fiction\");\r",
+							"    pm.expect(jsonData.price).to.eql(12.98);\r",
+							"    pm.expect(jsonData[\"current-stock\"]).to.eql(12);\r",
+							"    pm.expect(jsonData.available).to.eql(true);\r",
 							"});\r",
 							""
 						],
@@ -184,6 +192,16 @@
 				"disableBodyPruning": true
 			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -224,18 +242,24 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));\r",
-							"pm.test(\"Response time < 1000ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));\r",
-							"\r",
-							"const json = pm.response.json();\r",
-							"pm.test(\"Order created is true\", () => {\r",
-							"    pm.expect(json.created).to.eql(true);\r",
-							"    pm.expect(json.orderId).to.not.be.null;\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
 							"});\r",
 							"\r",
-							"pm.environment.set(\"orderId\", json.orderId);\r",
-							"pm.environment.set(\"bookId\", 1);\r",
-							"pm.environment.set(\"customerName\", \"Nini\");\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Order created is true\", function () {\r",
+							"    pm.expect(jsonData.created).to.eql(true);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Order ID is not null\", function () {\r",
+							"    pm.expect(jsonData.orderId).to.not.be.null;\r",
+							"    pm.environment.set(\"orderID\", jsonData.orderId);\r",
+							"});\r",
 							""
 						],
 						"type": "text/javascript",
@@ -303,14 +327,20 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));\r",
-							"pm.test(\"Response time < 10000ms\", () => pm.expect(pm.response.responseTime).to.be.below(10000));\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
 							"\r",
-							"const json = pm.response.json();\r",
-							"pm.test(\"Order details match\", () => {\r",
-							"    pm.expect(json.id).to.eql(parseInt(pm.environment.get(\"orderId\")));\r",
-							"    pm.expect(json.bookId).to.eql(parseInt(pm.environment.get(\"bookId\")));\r",
-							"    pm.expect(json.customerName).to.eql(pm.environment.get(\"customerName\"));\r",
+							"pm.test(\"Response time is less than 10000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(10000);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"All order details match\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"orderID\"));\r",
+							"    pm.expect(jsonData.bookId).to.eql(1);\r",
+							"    pm.expect(jsonData.customerName).to.eql(\"Nini\");\r",
 							"});\r",
 							""
 						],
@@ -335,7 +365,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{token}}",
+							"value": "{{{{token}}}}",
 							"type": "string"
 						}
 					]
@@ -371,8 +401,13 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));\r",
-							"pm.test(\"Response time < 1000ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
 							""
 						],
 						"type": "text/javascript",
